@@ -55,7 +55,7 @@ def decrypt():
     messagebox.showinfo("Hidden Message", hidden_text)
 
 
-root = ThemedTk(theme="azure")
+root = ThemedTk(theme="breeze")
 root.title("Intro to Cryptography")
 
 # Create encryption and decryption frames
@@ -91,7 +91,7 @@ submit_button_encrypt.pack(pady=10)
 ttk.Label(decryption_frame, text="Select image:").pack(pady=5)
 
 filepath_decrypt = ttk.Entry(decryption_frame)
-filepath_decrypt.pack(pady=5)
+filepath_decrypt.pack(pady=5, padx=10)
 
 browse_button_decrypt = ttk.Button(decryption_frame, text="Browse", command=browse_image_decrypt)
 browse_button_decrypt.pack(pady=5)
