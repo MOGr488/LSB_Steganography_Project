@@ -1,12 +1,16 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox
+
+import cv2
 from ttkthemes import ThemedTk
 from tkinter import ttk
-
+from LSBSteg import LSBSteg
 
 # Add your own encryption and decryption functions here
 def encrypt_image(secret_message, image_path, output_path):
-    pass
+    steg = LSBSteg(cv2.imread(image_path))
+    img_encoded = steg.encode_text(secret_message)
+    cv2.imwrite(output_path, img_encoded)
 
 
 def decrypt_image(image_path):
