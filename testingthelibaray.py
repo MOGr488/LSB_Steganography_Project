@@ -7,15 +7,17 @@ from tkinter import ttk
 from LSBSteg import LSBSteg
 
 
-# Add your own encryption and decryption functions here
-def encrypt_image(secret_message, image_path, output_path):
+def encrypt_image(secret_message, image_path):
     steg = LSBSteg(cv2.imread(image_path))
     img_encoded = steg.encode_text(secret_message)
-    cv2.imwrite(output_path, img_encoded)
+    cv2.imwrite('encrypted.png', img_encoded)
 
 
 def decrypt_image(image_path):
-    return "Hidden message"
+    im = cv2.imread(image_path)
+    steg = LSBSteg(im)
+    print("Text value:", steg.decode_text())
+    messagebox.showinfo("Success", "Image decrypted successfully!")
 
 
 def show_encryption_frame():
@@ -50,7 +52,7 @@ def encrypt():
     image_path = filepath_encrypt.get()
     secret_message = secret_message_input.get()
     output_path = output_file.get()
-    encrypt_image(secret_message, image_path, output_path)
+    encrypt_image(secret_message, image_path)
     messagebox.showinfo("Success", "Image encrypted successfully!")
 
 
