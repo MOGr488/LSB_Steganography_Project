@@ -8,6 +8,7 @@ from LSBSteg import LSBSteg
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 def encrypt_image(secret_message, image_path):
     steg = LSBSteg(cv2.imread(image_path))
     img_encoded = steg.encode_text(secret_message)
@@ -20,7 +21,7 @@ def decrypt_image(image_path):
     return steg.decode_text()
 
 
-def analyze_images(original_image_path, stegno_image_path):
+def analyze_images_heatmap(original_image_path, stegno_image_path):
     original_image = cv2.imread(original_image_path)
     stegno_image = cv2.imread(stegno_image_path)
 
@@ -44,6 +45,54 @@ def analyze_images(original_image_path, stegno_image_path):
     else:
         messagebox.showerror("Error", "The original and stego images have different dimensions.")
 
+def calc_histogram(image):
+    hist = np.zeros((256, 3), dtype=np.float32)
+    for i in range(3):
+        hist[:, i] = cv2.calcHist([image], [i], None, [256], [0, 256]).flatten()  # Flatten the histogram array
+    return hist
+
+def get_channel_color(channel):
+    colors = ['red', 'green', 'blue']
+    return colors[channel]
+
+def get_channel_name(channel):
+    names = ['Red Channel', 'Green Channel', 'Blue Channel']
+    return names[channel]
+
+def analyze_images(original_image_path, stegno_image_path):
+    original_image = cv2.imread(original_image_path)
+    stegno_image = cv2.imread(stegno_image_path)
+
+    if original_image.shape == stegno_image.shape:
+        # Calculate histograms for original image and stego image
+        original_hist = calc_histogram(original_image)
+        stegno_hist = calc_histogram(stegno_image)
+
+        # Display images and histograms using matplotlib
+        fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(12, 10))
+        titles = ['Original Image', 'Stego Image']
+        images = [original_image, stegno_image]
+        hist_data = [original_hist, stegno_hist]
+
+        for i in range(2):
+            # Display the image
+            axes[i, 0].imshow(cv2.cvtColor(images[i], cv2.COLOR_BGR2RGB))
+            axes[i, 0].set_title(titles[i])
+            axes[i, 0].axis('off')
+
+            # Display the histograms
+            for j in range(3):
+                axes[i, j+1].plot(hist_data[i][:, j], color=get_channel_color(j))
+                axes[i, j+1].set_xlim([0, 256])
+                axes[i, j+1].set_title(get_channel_name(j))
+
+        # Remove unused subplot
+        axes[2, 0].remove()
+
+        plt.tight_layout()
+        plt.show()
+    else:
+        messagebox.showerror("Error", "The original and stego images have different dimensions.")
 
 
 
@@ -123,9 +172,9 @@ root.grid_rowconfigure(0, weight=1)
 root.grid_columnconfigure(0, weight=0)
 root.grid_columnconfigure(1, weight=1)
 
-encryption_frame.grid(row=0, column=1, sticky="nsew",padx=5, pady=5)
-decryption_frame.grid(row=0, column=1, sticky="nsew",padx=5, pady=5)
-analysis_frame.grid(row=0, column=1, sticky="nsew",padx=5, pady=5)
+encryption_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
+decryption_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
+analysis_frame.grid(row=0, column=1, sticky="nsew", padx=5, pady=5)
 
 # Create encryption widgets
 ttk.Label(encryption_frame, text="Select image:").grid(row=0, column=0, pady=5)
