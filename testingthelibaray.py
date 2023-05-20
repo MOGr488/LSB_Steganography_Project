@@ -21,7 +21,9 @@ def decrypt_image(image_path):
     return steg.decode_text()
 
 
-def analyze_images_heatmap(original_image_path, stegno_image_path):
+def analyze_images_heatmap():
+    original_image_path = original_image_entry.get()
+    stegno_image_path = stegno_image_entry.get()
     original_image = cv2.imread(original_image_path)
     stegno_image = cv2.imread(stegno_image_path)
 
@@ -116,8 +118,7 @@ def analyze_images(original_image_path, stegno_image_path):
         for j in range(3):
             axes[1, j + 1].remove()
 
-        plt.tight_layout()
-        plt.show()
+
     else:
         messagebox.showerror("Error", "The original and stego images have different dimensions.")
 
@@ -249,6 +250,9 @@ browse_button_stegno.grid(row=5, column=0, pady=5)
 
 submit_button_analyze = ttk.Button(analysis_frame, text="Analyze", command=analyze)
 submit_button_analyze.grid(row=6, column=0, pady=20)
+
+submit_button_heatmap = ttk.Button(analysis_frame, text="Heatmap", command=analyze_images_heatmap)
+submit_button_heatmap.grid(row=6, column=1, pady=20)
 
 # Create main buttons frame
 main_buttons_frame = ttk.LabelFrame(root, text="Main Buttons")
