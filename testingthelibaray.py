@@ -31,8 +31,22 @@ def analyze_images(original_image_path, stegno_image_path):
             messagebox.showinfo("Analysis Result", "The stego image is identical to the original image.")
         else:
             messagebox.showinfo("Analysis Result", "The stego image differs from the original image.")
+
+            # Display the difference using matplotlib
+            fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 4))
+            titles = ['Blue Channel', 'Green Channel', 'Red Channel']
+            channels = [b, g, r]
+
+            for i, ax in enumerate(axes.flat):
+                ax.imshow(channels[i], cmap='gray')
+                ax.set_title(titles[i])
+                ax.axis('off')
+
+            plt.tight_layout()
+            plt.show()
     else:
         messagebox.showerror("Error", "The original and stego images have different dimensions.")
+
 
 
 def show_encryption_frame():
@@ -99,20 +113,21 @@ def analyze():
 
 root = ThemedTk(theme="breeze")
 root.title("Intro to Cryptography")
+root.geometry("330x330")
 
-# Create encryption, decryption, and analysis frames
-encryption_frame = ttk.Frame(root)
-decryption_frame = ttk.Frame(root)
-analysis_frame = ttk.Frame(root)
+# Create encryption, decryption, and analysis label frames
+encryption_frame = ttk.LabelFrame(root, text="Encryption")
+decryption_frame = ttk.LabelFrame(root, text="Decryption")
+analysis_frame = ttk.LabelFrame(root, text="Analysis")
 
 # Set grid configurations for root and frames
 root.grid_rowconfigure(0, weight=1)
 root.grid_columnconfigure(0, weight=0)
 root.grid_columnconfigure(1, weight=1)
 
-encryption_frame.grid(row=0, column=1, sticky="nsew")
-decryption_frame.grid(row=0, column=1, sticky="nsew")
-analysis_frame.grid(row=0, column=1, sticky="nsew")
+encryption_frame.grid(row=0, column=1, sticky="nsew",padx=5, pady=5)
+decryption_frame.grid(row=0, column=1, sticky="nsew",padx=5, pady=5)
+analysis_frame.grid(row=0, column=1, sticky="nsew",padx=5, pady=5)
 
 # Create encryption widgets
 ttk.Label(encryption_frame, text="Select image:").grid(row=0, column=0, pady=5)
@@ -161,11 +176,11 @@ browse_button_stegno = ttk.Button(analysis_frame, text="Browse", command=browse_
 browse_button_stegno.grid(row=5, column=0, pady=5)
 
 submit_button_analyze = ttk.Button(analysis_frame, text="Analyze", command=analyze)
-submit_button_analyze.grid(row=6, column=0, pady=10)
+submit_button_analyze.grid(row=6, column=0, pady=20)
 
 # Create main buttons frame
-main_buttons_frame = ttk.Frame(root)
-main_buttons_frame.grid(row=0, column=0, sticky="ns")
+main_buttons_frame = ttk.LabelFrame(root, text="Main Buttons")
+main_buttons_frame.grid(row=0, column=0, sticky="ns", padx=5, pady=5)
 
 # Create buttons to switch between frames
 encryption_button = ttk.Button(main_buttons_frame, text="Encryption", command=show_encryption_frame)
