@@ -66,15 +66,16 @@ def get_channel_name(channel):
 def plot_histogram_difference(original_hist, stegno_hist):
     diff_hist = np.abs(original_hist - stegno_hist)
 
-    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 4))
+    fig, axes = plt.subplots(nrows=2, ncols=3, figsize=(12, 8))
     titles = ['Red Channel', 'Green Channel', 'Blue Channel']
 
-    for i in range(3):
-        axes[i].bar(np.arange(256), diff_hist[:, i], color=get_channel_color(i))
-        axes[i].set_xlim([0, 256])
-        axes[i].set_title(titles[i])
-        axes[i].set_xlabel('Pixel Intensity')
-        axes[i].set_ylabel('Absolute Difference')
+    for i in range(2):
+        for j in range(3):
+            axes[i, j].bar(np.arange(256), diff_hist[:, j], color=get_channel_color(j))
+            axes[i, j].set_xlim([0, 256])
+            axes[i, j].set_title(titles[j])
+            axes[i, j].set_xlabel('Pixel Intensity')
+            axes[i, j].set_ylabel('Absolute Difference')
 
     plt.tight_layout()
     plt.show()
@@ -90,7 +91,7 @@ def analyze_images(original_image_path, stegno_image_path):
         stegno_hist = calc_histogram(stegno_image)
 
         # Display images and histograms using matplotlib
-        fig, axes = plt.subplots(nrows=3, ncols=4, figsize=(12, 10))
+        fig, axes = plt.subplots(nrows=2, ncols=4, figsize=(12, 8))
         titles = ['Original Image', 'Stego Image']
         images = [original_image, stegno_image]
         hist_data = [original_hist, stegno_hist]
@@ -111,8 +112,9 @@ def analyze_images(original_image_path, stegno_image_path):
         diff_hist_title = 'Histogram Difference'
         plot_histogram_difference(original_hist, stegno_hist)
 
-        # Remove unused subplot
-        axes[2, 0].remove()
+        # Remove unused subplots in the third row
+        for j in range(3):
+            axes[1, j + 1].remove()
 
         plt.tight_layout()
         plt.show()
@@ -165,7 +167,6 @@ def browse_stegno_image():
 def encrypt():
     image_path = filepath_encrypt.get()
     secret_message = secret_message_input.get()
-    output_path = output_file.get()
     encrypt_image(secret_message, image_path)
     messagebox.showinfo("Success", "Image encrypted successfully!")
 
