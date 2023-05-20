@@ -45,19 +45,40 @@ def analyze_images_heatmap(original_image_path, stegno_image_path):
     else:
         messagebox.showerror("Error", "The original and stego images have different dimensions.")
 
+
 def calc_histogram(image):
     hist = np.zeros((256, 3), dtype=np.float32)
     for i in range(3):
         hist[:, i] = cv2.calcHist([image], [i], None, [256], [0, 256]).flatten()  # Flatten the histogram array
     return hist
 
+
 def get_channel_color(channel):
     colors = ['red', 'green', 'blue']
     return colors[channel]
 
+
 def get_channel_name(channel):
     names = ['Red Channel', 'Green Channel', 'Blue Channel']
     return names[channel]
+
+
+def plot_histogram_difference(original_hist, stegno_hist):
+    diff_hist = np.abs(original_hist - stegno_hist)
+
+    fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 4))
+    titles = ['Red Channel', 'Green Channel', 'Blue Channel']
+
+    for i in range(3):
+        axes[i].bar(np.arange(256), diff_hist[:, i], color=get_channel_color(i))
+        axes[i].set_xlim([0, 256])
+        axes[i].set_title(titles[i])
+        axes[i].set_xlabel('Pixel Intensity')
+        axes[i].set_ylabel('Absolute Difference')
+
+    plt.tight_layout()
+    plt.show()
+
 
 def analyze_images(original_image_path, stegno_image_path):
     original_image = cv2.imread(original_image_path)
@@ -82,9 +103,13 @@ def analyze_images(original_image_path, stegno_image_path):
 
             # Display the histograms
             for j in range(3):
-                axes[i, j+1].plot(hist_data[i][:, j], color=get_channel_color(j))
-                axes[i, j+1].set_xlim([0, 256])
-                axes[i, j+1].set_title(get_channel_name(j))
+                axes[i, j + 1].plot(hist_data[i][:, j], color=get_channel_color(j))
+                axes[i, j + 1].set_xlim([0, 256])
+                axes[i, j + 1].set_title(get_channel_name(j))
+
+        # Calculate and display the difference histograms
+        diff_hist_title = 'Histogram Difference'
+        plot_histogram_difference(original_hist, stegno_hist)
 
         # Remove unused subplot
         axes[2, 0].remove()
@@ -93,7 +118,6 @@ def analyze_images(original_image_path, stegno_image_path):
         plt.show()
     else:
         messagebox.showerror("Error", "The original and stego images have different dimensions.")
-
 
 
 def show_encryption_frame():
