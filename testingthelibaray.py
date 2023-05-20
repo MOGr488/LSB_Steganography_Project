@@ -5,7 +5,8 @@ import cv2
 from ttkthemes import ThemedTk
 from tkinter import ttk
 from LSBSteg import LSBSteg
-
+import matplotlib.pyplot as plt
+import numpy as np
 
 def encrypt_image(secret_message, image_path):
     steg = LSBSteg(cv2.imread(image_path))
@@ -25,27 +26,24 @@ def analyze_images(original_image_path, stegno_image_path):
 
     if original_image.shape == stegno_image.shape:
         difference = cv2.subtract(original_image, stegno_image)
-        b, g, r = cv2.split(difference)
+        difference_gray = cv2.cvtColor(difference, cv2.COLOR_BGR2GRAY)
 
-        if cv2.countNonZero(b) == 0 and cv2.countNonZero(g) == 0 and cv2.countNonZero(r) == 0:
+        if cv2.countNonZero(difference_gray) == 0:
             messagebox.showinfo("Analysis Result", "The stego image is identical to the original image.")
         else:
             messagebox.showinfo("Analysis Result", "The stego image differs from the original image.")
 
-            # Display the difference using matplotlib
-            fig, axes = plt.subplots(nrows=1, ncols=3, figsize=(12, 4))
-            titles = ['Blue Channel', 'Green Channel', 'Red Channel']
-            channels = [b, g, r]
+            # Display the difference heatmap using matplotlib
+            fig, ax = plt.subplots(figsize=(8, 8))
+            heatmap = ax.imshow(difference_gray, cmap='hot')
+            plt.colorbar(heatmap)
 
-            for i, ax in enumerate(axes.flat):
-                ax.imshow(channels[i], cmap='gray')
-                ax.set_title(titles[i])
-                ax.axis('off')
-
-            plt.tight_layout()
+            plt.title("Difference Heatmap")
+            plt.axis('off')
             plt.show()
     else:
         messagebox.showerror("Error", "The original and stego images have different dimensions.")
+
 
 
 
