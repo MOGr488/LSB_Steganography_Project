@@ -37,20 +37,20 @@ def analyze_images(original_image_path, stegno_image_path):
 
 def show_encryption_frame():
     encryption_frame.grid(row=0, column=1, sticky="nsew")
-    decryption_frame.grid_forget()
-    analysis_frame.grid_forget()
+    decryption_frame.grid_remove()
+    analysis_frame.grid_remove()
 
 
 def show_decryption_frame():
     decryption_frame.grid(row=0, column=1, sticky="nsew")
-    encryption_frame.grid_forget()
-    analysis_frame.grid_forget()
+    encryption_frame.grid_remove()
+    analysis_frame.grid_remove()
 
 
 def show_analysis_frame():
     analysis_frame.grid(row=0, column=1, sticky="nsew")
-    encryption_frame.grid_forget()
-    decryption_frame.grid_forget()
+    encryption_frame.grid_remove()
+    decryption_frame.grid_remove()
 
 
 def browse_image_encrypt():
@@ -105,6 +105,15 @@ encryption_frame = ttk.Frame(root)
 decryption_frame = ttk.Frame(root)
 analysis_frame = ttk.Frame(root)
 
+# Set grid configurations for root and frames
+root.grid_rowconfigure(0, weight=1)
+root.grid_columnconfigure(0, weight=0)
+root.grid_columnconfigure(1, weight=1)
+
+encryption_frame.grid(row=0, column=1, sticky="nsew")
+decryption_frame.grid(row=0, column=1, sticky="nsew")
+analysis_frame.grid(row=0, column=1, sticky="nsew")
+
 # Create encryption widgets
 ttk.Label(encryption_frame, text="Select image:").grid(row=0, column=0, pady=5)
 
@@ -154,22 +163,18 @@ browse_button_stegno.grid(row=5, column=0, pady=5)
 submit_button_analyze = ttk.Button(analysis_frame, text="Analyze", command=analyze)
 submit_button_analyze.grid(row=6, column=0, pady=10)
 
+# Create main buttons frame
+main_buttons_frame = ttk.Frame(root)
+main_buttons_frame.grid(row=0, column=0, sticky="ns")
+
 # Create buttons to switch between frames
-encryption_button = ttk.Button(root, text="Encryption", command=show_encryption_frame)
-encryption_button.grid(row=0, column=0, padx=10)
+encryption_button = ttk.Button(main_buttons_frame, text="Encryption", command=show_encryption_frame)
+encryption_button.pack(padx=10, pady=10, fill=tk.X)
 
-decryption_button = ttk.Button(root, text="Decryption", command=show_decryption_frame)
-decryption_button.grid(row=1, column=0, padx=10, pady=10)
+decryption_button = ttk.Button(main_buttons_frame, text="Decryption", command=show_decryption_frame)
+decryption_button.pack(padx=10, pady=10, fill=tk.X)
 
-analyze_button = ttk.Button(root, text="Analyze", command=show_analysis_frame)
-analyze_button.grid(row=2, column=0, padx=10, pady=10)
-
-# Set grid configurations for root and frames
-root.grid_rowconfigure(0, weight=1)
-root.grid_columnconfigure(1, weight=1)
-
-encryption_frame.grid(row=0, column=1, sticky="nsew")
-decryption_frame.grid(row=0, column=1, sticky="nsew")
-analysis_frame.grid(row=0, column=1, sticky="nsew")
+analyze_button = ttk.Button(main_buttons_frame, text="Analyze", command=show_analysis_frame)
+analyze_button.pack(padx=10, pady=10, fill=tk.X)
 
 root.mainloop()
