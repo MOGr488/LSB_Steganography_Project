@@ -186,7 +186,7 @@ def analyze():
 
 root = ThemedTk(theme="breeze")
 root.title("Intro to Cryptography")
-root.geometry("330x330")
+root.geometry("310x360")
 
 # Create encryption, decryption, and analysis label frames
 encryption_frame = ttk.LabelFrame(root, text="Encryption")
@@ -248,11 +248,11 @@ stegno_image_entry.grid(row=4, column=0, pady=5, padx=10)
 browse_button_stegno = ttk.Button(analysis_frame, text="Browse", command=browse_stegno_image)
 browse_button_stegno.grid(row=5, column=0, pady=5)
 
-submit_button_analyze = ttk.Button(analysis_frame, text="Analyze", command=analyze)
+submit_button_analyze = ttk.Button(analysis_frame, text=" \U0001F4CA Analyze", command=analyze)
 submit_button_analyze.grid(row=6, column=0, pady=20)
 
-submit_button_heatmap = ttk.Button(analysis_frame, text="Heatmap", command=analyze_images_heatmap)
-submit_button_heatmap.grid(row=6, column=1, pady=20)
+submit_button_heatmap = ttk.Button(analysis_frame, text="🌡 Heatmap", command=analyze_images_heatmap)
+submit_button_heatmap.grid(row=7, column=0, pady=7)
 
 # Create main buttons frame
 main_buttons_frame = ttk.LabelFrame(root, text="Main Buttons")
