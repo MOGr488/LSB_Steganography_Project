@@ -16,18 +16,41 @@ def encrypt_image(secret_message, image_path):
 def decrypt_image(image_path):
     im = cv2.imread(image_path)
     steg = LSBSteg(im)
-    print("Text value:", steg.decode_text())
-    messagebox.showinfo("Success", "Image decrypted successfully!")
+    return steg.decode_text()
+
+
+def analyze_images(original_image_path, stegno_image_path):
+    original_image = cv2.imread(original_image_path)
+    stegno_image = cv2.imread(stegno_image_path)
+
+    if original_image.shape == stegno_image.shape:
+        difference = cv2.subtract(original_image, stegno_image)
+        b, g, r = cv2.split(difference)
+
+        if cv2.countNonZero(b) == 0 and cv2.countNonZero(g) == 0 and cv2.countNonZero(r) == 0:
+            messagebox.showinfo("Analysis Result", "The stego image is identical to the original image.")
+        else:
+            messagebox.showinfo("Analysis Result", "The stego image differs from the original image.")
+    else:
+        messagebox.showerror("Error", "The original and stego images have different dimensions.")
 
 
 def show_encryption_frame():
-    encryption_frame.pack(fill=tk.BOTH, expand=True)
-    decryption_frame.pack_forget()
+    encryption_frame.grid(row=0, column=1, sticky="nsew")
+    decryption_frame.grid_forget()
+    analysis_frame.grid_forget()
 
 
 def show_decryption_frame():
-    decryption_frame.pack(fill=tk.BOTH, expand=True)
-    encryption_frame.pack_forget()
+    decryption_frame.grid(row=0, column=1, sticky="nsew")
+    encryption_frame.grid_forget()
+    analysis_frame.grid_forget()
+
+
+def show_analysis_frame():
+    analysis_frame.grid(row=0, column=1, sticky="nsew")
+    encryption_frame.grid_forget()
+    decryption_frame.grid_forget()
 
 
 def browse_image_encrypt():
@@ -42,10 +65,16 @@ def browse_image_decrypt():
     filepath_decrypt.insert(0, file_path)
 
 
-def browse_output_file():
-    output_file_path = filedialog.asksaveasfilename()
-    output_file.delete(0, tk.END)
-    output_file.insert(0, output_file_path)
+def browse_original_image():
+    file_path = filedialog.askopenfilename()
+    original_image_entry.delete(0, tk.END)
+    original_image_entry.insert(0, file_path)
+
+
+def browse_stegno_image():
+    file_path = filedialog.askopenfilename()
+    stegno_image_entry.delete(0, tk.END)
+    stegno_image_entry.insert(0, file_path)
 
 
 def encrypt():
@@ -62,55 +91,85 @@ def decrypt():
     messagebox.showinfo("Hidden Message", hidden_text)
 
 
+def analyze():
+    original_image_path = original_image_entry.get()
+    stegno_image_path = stegno_image_entry.get()
+    analyze_images(original_image_path, stegno_image_path)
+
+
 root = ThemedTk(theme="breeze")
 root.title("Intro to Cryptography")
 
-# Create encryption and decryption frames
+# Create encryption, decryption, and analysis frames
 encryption_frame = ttk.Frame(root)
 decryption_frame = ttk.Frame(root)
+analysis_frame = ttk.Frame(root)
 
 # Create encryption widgets
-ttk.Label(encryption_frame, text="Select image:").pack(pady=5)
+ttk.Label(encryption_frame, text="Select image:").grid(row=0, column=0, pady=5)
 
 filepath_encrypt = ttk.Entry(encryption_frame)
-filepath_encrypt.pack(pady=5, padx=10)
+filepath_encrypt.grid(row=1, column=0, pady=5, padx=10)
 
 browse_button_encrypt = ttk.Button(encryption_frame, text="Browse", command=browse_image_encrypt)
-browse_button_encrypt.pack(pady=5)
+browse_button_encrypt.grid(row=2, column=0, pady=5)
 
-ttk.Label(encryption_frame, text="Secret Message:").pack(pady=5)
+ttk.Label(encryption_frame, text="Secret Message:").grid(row=3, column=0, pady=5)
 
 secret_message_input = ttk.Entry(encryption_frame)
-secret_message_input.pack(pady=5)
-
-ttk.Label(encryption_frame, text="Output File:").pack(pady=5)
-
-output_file = ttk.Entry(encryption_frame)
-output_file.pack(pady=5)
-
-browse_button_output = ttk.Button(encryption_frame, text="Output File", command=browse_output_file)
-browse_button_output.pack(pady=5)
+secret_message_input.grid(row=4, column=0, pady=5)
 
 submit_button_encrypt = ttk.Button(encryption_frame, text="Encrypt", command=encrypt)
-submit_button_encrypt.pack(pady=10)
+submit_button_encrypt.grid(row=5, column=0, pady=10)
 
 # Create decryption widgets
-ttk.Label(decryption_frame, text="Select image:").pack(pady=5)
+ttk.Label(decryption_frame, text="Select image:").grid(row=0, column=0, pady=5)
 
 filepath_decrypt = ttk.Entry(decryption_frame)
-filepath_decrypt.pack(pady=5, padx=10)
+filepath_decrypt.grid(row=1, column=0, pady=5, padx=10)
 
 browse_button_decrypt = ttk.Button(decryption_frame, text="Browse", command=browse_image_decrypt)
-browse_button_decrypt.pack(pady=5)
+browse_button_decrypt.grid(row=2, column=0, pady=5)
 
 submit_button_decrypt = ttk.Button(decryption_frame, text="Decrypt", command=decrypt)
-submit_button_decrypt.pack(pady=10)
+submit_button_decrypt.grid(row=3, column=0, pady=10)
+
+# Create analysis widgets
+ttk.Label(analysis_frame, text="Original Image:").grid(row=0, column=0, pady=5)
+
+original_image_entry = ttk.Entry(analysis_frame)
+original_image_entry.grid(row=1, column=0, pady=5, padx=10)
+
+browse_button_original = ttk.Button(analysis_frame, text="Browse", command=browse_original_image)
+browse_button_original.grid(row=2, column=0, pady=5)
+
+ttk.Label(analysis_frame, text="Stegno Image:").grid(row=3, column=0, pady=5)
+
+stegno_image_entry = ttk.Entry(analysis_frame)
+stegno_image_entry.grid(row=4, column=0, pady=5, padx=10)
+
+browse_button_stegno = ttk.Button(analysis_frame, text="Browse", command=browse_stegno_image)
+browse_button_stegno.grid(row=5, column=0, pady=5)
+
+submit_button_analyze = ttk.Button(analysis_frame, text="Analyze", command=analyze)
+submit_button_analyze.grid(row=6, column=0, pady=10)
 
 # Create buttons to switch between frames
 encryption_button = ttk.Button(root, text="Encryption", command=show_encryption_frame)
-encryption_button.pack(side="left", padx=10, pady=10)
+encryption_button.grid(row=0, column=0, padx=10)
 
 decryption_button = ttk.Button(root, text="Decryption", command=show_decryption_frame)
-decryption_button.pack(side="left", padx=10, pady=10)
+decryption_button.grid(row=1, column=0, padx=10, pady=10)
+
+analyze_button = ttk.Button(root, text="Analyze", command=show_analysis_frame)
+analyze_button.grid(row=2, column=0, padx=10, pady=10)
+
+# Set grid configurations for root and frames
+root.grid_rowconfigure(0, weight=1)
+root.grid_columnconfigure(1, weight=1)
+
+encryption_frame.grid(row=0, column=1, sticky="nsew")
+decryption_frame.grid(row=0, column=1, sticky="nsew")
+analysis_frame.grid(row=0, column=1, sticky="nsew")
 
 root.mainloop()
